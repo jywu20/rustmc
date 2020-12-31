@@ -44,5 +44,4 @@ fn main() {
         });
         println!("{} {} {}", temp, mag_acc / result.len() as f64, corr_acc / result.len() as f64);
     }
-
 }

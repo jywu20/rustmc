@@ -11,7 +11,7 @@ pub struct SimulationParameters {
 }
 
 impl Lattice {
-    pub fn sweep_times<F: FnMut(&Lattice) -> ()>(&mut self, sweep_times: usize, model_param: &ModelParameter, mut callback: F) {
+    pub fn sweep_ising<F: FnMut(&Lattice) -> ()>(&mut self, sweep_times: usize, model_param: &ModelParameter, mut callback: F) {
         let mut rng = rand::thread_rng();
         for _ in 0 .. sweep_times {
             for flipped_site in 0 .. SITE_NUM {
@@ -26,11 +26,11 @@ impl Lattice {
     pub fn run<T, S, F: Fn(&Lattice) -> T, G: Fn(Vec<T>) -> S>(&mut self, model_param: &ModelParameter, sim_param: &SimulationParameters, diagnose: F, binning: G) -> Vec<S> {
         let mut result = Vec::new();
         
-        self.sweep_times(sim_param.heat_up_times, model_param, |_|{});
+        self.sweep_ising(sim_param.heat_up_times, model_param, |_|{});
 
         for _ in (0 .. sim_param.sweep_times).step_by(sim_param.bin_size) {
             let mut this_bin = Vec::new();
-            self.sweep_times(sim_param.bin_size, model_param, |lattice| {
+            self.sweep_ising(sim_param.bin_size, model_param, |lattice| {
                 this_bin.push(diagnose(lattice));
             });
             result.push(binning(this_bin));
@@ -48,7 +48,7 @@ mod test {
     fn test_update() {
         let mut lattice = Lattice::new();
         let sweep_times = 10;
-        lattice.sweep_times(sweep_times, &ModelParameter {
+        lattice.sweep_ising(sweep_times, &ModelParameter {
             j: 1.0, beta: 0.1, b: 0.0
         }, |lattice| {
             println!("{}", lattice.to_string());
