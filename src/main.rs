@@ -3,18 +3,20 @@ mod lattice;
 mod postop;
 mod update;
 mod config;
+mod model;
 
 use ham::*;
 use lattice::*;
 use update::*;
 use postop::*;
+use model::*;
 
 fn main() {
-    let mut lattice = Lattice::new();
+    let mut lattice = IsingField::new();
     let sweep_times = 1000;
     let heat_up_times = 1000;
     let bin_size = 10;
-  
+    
     for i in 50 .. 500 {
         let temp = 0.01 * i as f64;
         let beta = 1.0 / temp;

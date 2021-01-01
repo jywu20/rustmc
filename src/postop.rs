@@ -18,7 +18,7 @@ mod test {
     #[test]
     fn test_magnetization() {
         println!("Test magnetization.");
-        let mut lattice = Lattice::new();
+        let mut lattice = IsingField::new();
 
         for i in 0 .. SITE_NUM {
             lattice.configuration[i] = 1;
@@ -37,7 +37,7 @@ mod test {
         println!("{}", magnetization(&lattice.configuration));
 
         for _ in 0 .. 100 {
-            let lattice = Lattice::new();
+            let lattice = IsingField::new();
             println!("{}", magnetization(&lattice.configuration));
         }
     }

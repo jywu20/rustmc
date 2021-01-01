@@ -10,12 +10,12 @@ pub struct SimulationParameters {
     pub heat_up_times: usize
 }
 
-impl Lattice {
-    pub fn sweep_ising<F: FnMut(&Lattice) -> ()>(&mut self, sweep_times: usize, model_param: &ModelParameter, mut callback: F) {
+impl IsingField {
+    pub fn sweep_ising<F: FnMut(&IsingField) -> ()>(&mut self, sweep_times: usize, model_param: &ModelParameter, mut callback: F) {
         let mut rng = rand::thread_rng();
         for _ in 0 .. sweep_times {
             for flipped_site in 0 .. SITE_NUM {
-                if rng.gen::<f64>() < (- self.free_energy_change(flipped_site, model_param)).exp() {
+                if rng.gen::<f64>() < (- self.energy_change(flipped_site, model_param)).exp() {
                     self.configuration[flipped_site] *= -1;
                 }
             }
@@ -23,7 +23,7 @@ impl Lattice {
         }
     }
 
-    pub fn run<T, S, F: Fn(&Lattice) -> T, G: Fn(Vec<T>) -> S>(&mut self, model_param: &ModelParameter, sim_param: &SimulationParameters, diagnose: F, binning: G) -> Vec<S> {
+    pub fn run<T, S, F: Fn(&IsingField) -> T, G: Fn(Vec<T>) -> S>(&mut self, model_param: &ModelParameter, sim_param: &SimulationParameters, diagnose: F, binning: G) -> Vec<S> {
         let mut result = Vec::new();
         
         self.sweep_ising(sim_param.heat_up_times, model_param, |_|{});
@@ -46,7 +46,7 @@ mod test {
 
     #[test]
     fn test_update() {
-        let mut lattice = Lattice::new();
+        let mut lattice = IsingField::new();
         let sweep_times = 10;
         lattice.sweep_ising(sweep_times, &ModelParameter {
             j: 1.0, beta: 0.1, b: 0.0

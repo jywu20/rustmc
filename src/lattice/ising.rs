@@ -1,9 +1,9 @@
-use super::config::*;
+use crate::config::*;
 use rand;
 use rand::Rng;
 use std::string::ToString;
 
-pub struct Lattice {
+pub struct IsingField {
     /// The list of sites in the lattice.
     /// The indexing rule is as follows:
     /// Suppose the site is at point (i, j), where i denotes the row and j denotes the column, then the index of the site is i * SIDE + j
@@ -16,7 +16,7 @@ pub struct Lattice {
     pub neighbor_list: [[usize;8];SITE_NUM]
 }
 
-impl ToString for Lattice {
+impl ToString for IsingField {
     fn to_string(&self) -> String {
         let mut result = String::new();
         for i in 0 .. SIDE {
@@ -29,7 +29,7 @@ impl ToString for Lattice {
     }
 }
 
-impl Lattice {
+impl IsingField {
     pub fn new() -> Self {
         let mut coordinate_list = [[0;2];SITE_NUM];
         let mut index_list = [[0;SIDE];SIDE]; 
@@ -43,8 +43,8 @@ impl Lattice {
 
         let mut configuration = [0;SITE_NUM];
         for i in 0 .. SITE_NUM {
-            let choice = rand::thread_rng().gen_range(0..VALUES_NUM);
-            configuration[i] = VALUES[choice];
+            let choice = rand::thread_rng().gen_range(0..ISING_VALUES_NUM);
+            configuration[i] = ISING_VALUES[choice];
         }
 
         let mut neighbor_list = [[0;8];SITE_NUM];
@@ -64,7 +64,7 @@ impl Lattice {
         Self {
             coordinate_list: coordinate_list,
             index_list: index_list,
-            configuration: configuration,
+            configuration,
             neighbor_list: neighbor_list
         }
     }
@@ -86,7 +86,7 @@ mod test {
     #[test]
     fn test_coordinate_list() {
         println!("Testing coordinate list.");
-        let lattice = Lattice::new();
+        let lattice = IsingField::new();
         for idx in 0 .. SITE_NUM {
             println!("{:?}", lattice.coordinate_list[idx]);
         }
@@ -95,7 +95,7 @@ mod test {
     #[test]
     fn test_neighbor_list_inner_point() {
         println!("Testing neighbor list.");
-        let lattice = Lattice::new();
+        let lattice = IsingField::new();
         
     }
 
@@ -106,7 +106,7 @@ mod test {
 
     #[test]
     fn test_to_string() {
-        let lattice = Lattice::new();
+        let lattice = IsingField::new();
         println!("{:?}", lattice.configuration);
         println!("{}", lattice.to_string());
     }
