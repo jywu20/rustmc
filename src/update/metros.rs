@@ -1,6 +1,6 @@
-use super::lattice::*;
-use super::ham::*;
-use super::config::*;
+use crate::lattice::*;
+use crate::ham::*;
+use crate::config::*;
 use rand::Rng;
 
 // Things like SIDE and SITE_NUM should have be included in this struct but since generic const isn't stable we have to wait.

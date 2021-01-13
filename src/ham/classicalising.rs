@@ -1,5 +1,5 @@
-use super::config::*;
-use super::lattice::IsingField;
+use crate::config::*;
+use crate::lattice::IsingField;
 
 pub struct ModelParameter {
     pub j: f64,
