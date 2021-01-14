@@ -7,7 +7,7 @@ use std::ops::IndexMut;
 use crate::Lattice2D;
 use crate::postop::*;
 
-pub struct IsingField {
+pub struct IsingField2D {
     /// The list of sites in the lattice.
     /// The indexing rule is as follows:
     /// Suppose the site is at point (i, j), where i denotes the row and j denotes the column, then the index of the site is i * SIDE + j
@@ -20,7 +20,7 @@ pub struct IsingField {
     pub neighbor_list: [[usize;8];SITE_NUM]
 }
 
-impl IsingField {
+impl IsingField2D {
     pub fn new() -> Self {
         let mut coordinate_list = [[0;2];SITE_NUM];
         let mut index_list = [[0;SIDE];SIDE]; 
@@ -67,20 +67,20 @@ impl IsingField {
     }
 }
 
-impl Index<usize> for IsingField {
+impl Index<usize> for IsingField2D {
     type Output = i32;
     fn index(&self, index: usize) -> &i32 {
         &self.configuration[index]
     }
 }
 
-impl IndexMut<usize> for IsingField {
+impl IndexMut<usize> for IsingField2D {
     fn index_mut(&mut self, index: usize) -> &mut i32 {
         &mut self.configuration[index]
     }
 }
 
-impl Lattice2D for IsingField {
+impl Lattice2D for IsingField2D {
     fn site_index_to_coordinate(&self, site_index: usize) -> (usize, usize) {
         (self.coordinate_list[site_index][0], self.coordinate_list[site_index][1])
     }
@@ -91,7 +91,7 @@ impl Lattice2D for IsingField {
     }
 }
 
-impl ToString for IsingField {
+impl ToString for IsingField2D {
     fn to_string(&self) -> String {
         let mut result = String::new();
         for i in 0 .. SIDE {
@@ -104,7 +104,7 @@ impl ToString for IsingField {
     }
 }
 
-impl MagneticModel for IsingField {
+impl MagneticModel for IsingField2D {
     fn magnetization(&self) -> f64 {
         (self.configuration.iter().sum::<i32>() as f64) / (SITE_NUM as f64)
     }
@@ -121,7 +121,7 @@ mod test {
     #[test]
     fn test_coordinate_list() {
         println!("Testing coordinate list.");
-        let lattice = IsingField::new();
+        let lattice = IsingField2D::new();
         for idx in 0 .. SITE_NUM {
             println!("{:?}", lattice.coordinate_list[idx]);
         }
@@ -129,7 +129,7 @@ mod test {
 
     #[test]
     fn access() {
-        let mut lattice = IsingField::new();
+        let mut lattice = IsingField2D::new();
         assert!(lattice.configuration[9] == lattice[9]);
         lattice[8] = 1;
         assert!(lattice.configuration[8] == lattice[8]);
@@ -137,7 +137,7 @@ mod test {
 
     #[test]
     fn test_to_string() {
-        let lattice = IsingField::new();
+        let lattice = IsingField2D::new();
         println!("{:?}", lattice.configuration);
         println!("{}", lattice.to_string());
     }
