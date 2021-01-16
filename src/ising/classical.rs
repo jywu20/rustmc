@@ -2,6 +2,7 @@ use rand::Rng;
 use crate::EnergyMeasure;
 use crate::config::*;
 use crate::model::*;
+use crate::flip::*;
 use super::IsingField2D;
 
 #[derive(Copy, Clone)]
@@ -75,8 +76,8 @@ impl EnergyMeasure for ClassicalIsingModel2D {
     }
 }
 
-impl ClassicalIsingModel2D {
-    pub fn sweep<F: FnMut(&ClassicalIsingModel2D) -> ()>(&mut self, sweep_times: usize, mut callback: F) {
+impl Flip for ClassicalIsingModel2D {
+    fn sweep<F: FnMut(&ClassicalIsingModel2D) -> ()>(&mut self, sweep_times: usize, mut callback: F) {
         let mut rng = rand::thread_rng();
         for _ in 0 .. sweep_times {
             for flipped_site in 0 .. SITE_NUM {
