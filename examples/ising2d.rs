@@ -1,8 +1,9 @@
-use montecarlo::ising::*;
 use montecarlo::*;
+use montecarlo::flip::*;
+use montecarlo::ising::*;
 
 fn main() {
-    let mut model = ClassicalIsingModel2D::new();
+    let mut model = ClassicalIsingModel2DMetropolis::new();
     let sweep_times = 1000;
     let heat_up_times = 1000;
     let bin_size = 10;

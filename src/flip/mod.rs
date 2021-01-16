@@ -4,3 +4,4 @@ mod flip;
 mod metropolis;
 
 pub use flip::*;
+pub use metropolis::*;
