@@ -1,13 +1,5 @@
-mod config;
-mod ising;
-mod lattice;
-mod model;
-mod postop;
-
-use ising::*;
-use lattice::*;
-use model::*;
-use postop::*;
+use montecarlo::ising::*;
+use montecarlo::*;
 
 fn main() {
     let mut model = ClassicalIsingModel2D::new();
