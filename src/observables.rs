@@ -5,3 +5,8 @@ pub trait EnergyMeasure {
     fn energy(&self) -> f64;
     fn energy_change(&self, flipped_site: usize) -> f64;
 }
+
+pub trait MagneticModel {
+    fn magnetization(&self) -> f64;
+    fn correlation(&self, point1: usize, point2: usize) -> f64;
+}

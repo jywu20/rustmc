@@ -5,7 +5,7 @@ use std::string::ToString;
 use std::ops::Index;
 use std::ops::IndexMut;
 use crate::Lattice2D;
-use crate::postop::*;
+use crate::observables::*;
 
 pub struct IsingField2D {
     /// The list of sites in the lattice.
