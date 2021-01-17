@@ -1,5 +1,5 @@
 use crate::*;
-use crate::observables::EnergyMeasure;
+use crate::observables::Energy;
 use crate::config::*;
 use crate::flip::*;
 use super::IsingField2D;
@@ -16,7 +16,7 @@ pub struct ClassicalIsingModel2DFlipping {
     pub model_parameter: ClassicalIsingModelParameter,
 }
 
-impl EnergyMeasure for ClassicalIsingModel2DFlipping {
+impl Energy for ClassicalIsingModel2DFlipping {
     type ModelParameter = ClassicalIsingModelParameter;
 
     fn set_model_parameters(&mut self, model_parameter: Self::ModelParameter) {

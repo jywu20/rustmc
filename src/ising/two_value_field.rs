@@ -1,11 +1,14 @@
-use crate::config::*;
 use rand;
 use rand::Rng;
 use std::string::ToString;
 use std::ops::Index;
 use std::ops::IndexMut;
+use crate::config::*;
 use crate::Lattice2D;
 use crate::observables::*;
+
+pub const ISING_VALUES_NUM: usize = 2;
+pub const ISING_VALUES: [i32;ISING_VALUES_NUM] = [-1, 1];
 
 pub struct IsingField2D {
     /// The list of sites in the lattice.
@@ -104,7 +107,7 @@ impl ToString for IsingField2D {
     }
 }
 
-impl MagneticModel for IsingField2D {
+impl Magnetic for IsingField2D {
     fn magnetization(&self) -> f64 {
         (self.configuration.iter().sum::<i32>() as f64) / (SITE_NUM as f64)
     }
