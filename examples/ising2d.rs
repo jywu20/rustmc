@@ -1,5 +1,5 @@
 use montecarlo::*;
-use montecarlo::flip::*;
+use montecarlo::observables::*;
 use montecarlo::ising::*;
 
 fn main() {
@@ -15,7 +15,7 @@ fn main() {
 
         model.set_model_parameters(ClassicalIsingModelParameter { j: 1.0, beta, b });
 
-        model.set_simulation_parameters(MetropolisParameters {
+        model.set_sweeping_parameters(SweepingParameters {
             sweep_times,
             heat_up_times,
             bin_size,

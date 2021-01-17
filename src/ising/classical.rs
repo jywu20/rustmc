@@ -1,5 +1,5 @@
-use rand::Rng;
-use crate::flip::EnergyMeasure;
+use crate::*;
+use crate::observables::EnergyMeasure;
 use crate::config::*;
 use crate::flip::*;
 use super::IsingField2D;
@@ -14,7 +14,6 @@ pub struct ClassicalIsingModelParameter {
 pub struct ClassicalIsingModel2DFlipping {
     pub lattice: IsingField2D,
     pub model_parameter: ClassicalIsingModelParameter,
-    pub simulation_parameter: MetropolisParameters
 }
 
 impl EnergyMeasure for ClassicalIsingModel2DFlipping {
@@ -54,15 +53,12 @@ impl EnergyMeasure for ClassicalIsingModel2DFlipping {
     }
 }
 
-impl Flip for ClassicalIsingModel2DFlipping {
+impl MetropolisFlip for ClassicalIsingModel2DFlipping {
     fn new() -> Self {
         Self {
             lattice: IsingField2D::new(),
             model_parameter: ClassicalIsingModelParameter {
                 j: 0.0, beta: 0.0, b: 0.0
-            },
-            simulation_parameter: MetropolisParameters {
-                sweep_times: 0, bin_size: 1, heat_up_times: 0
             }
         }
     }
@@ -71,20 +67,12 @@ impl Flip for ClassicalIsingModel2DFlipping {
         self.lattice[site] *= -1;
     }
 
-    fn sweep<F: FnMut(&ClassicalIsingModel2DFlipping) -> ()>(&mut self, sweep_times: usize, mut callback: F) {
-        let mut rng = rand::thread_rng();
-        for _ in 0 .. sweep_times {
-            for flipped_site in 0 .. SITE_NUM {
-                if rng.gen::<f64>() < (- self.energy_change(flipped_site)).exp() {
-                    self.flip(flipped_site);
-                }
-            }
-            callback(self);
-        }
+    fn accept_rate(&self, flipped_site: usize) -> f64 {
+        (- self.energy_change(flipped_site)).exp()
     }
 }
 
-pub type ClassicalIsingModel2DMetropolis = MetropolisUpdater<ClassicalIsingModel2DFlipping>;
+pub type ClassicalIsingModel2DMetropolis = SweepingModel<Metropolis<ClassicalIsingModel2DFlipping>>;
 
 #[cfg(test)]
 mod test {
@@ -114,17 +102,5 @@ mod test {
                 }
             }
         }
-    }
-
-    #[test]
-    fn test_update() {
-        let mut model = ClassicalIsingModel2DFlipping::new();
-        let sweep_times = 10;
-        model.set_model_parameters(ClassicalIsingModelParameter {
-            j: 1.0, beta: 0.1, b: 0.0
-        });
-        model.sweep(sweep_times, |model| {
-            println!("{}", model.lattice.to_string());
-        });
     }
 }

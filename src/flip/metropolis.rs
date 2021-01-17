@@ -1,73 +1,53 @@
-use crate::Model;
-use super::{EnergyMeasure, Flip};
+use std::ops::{Deref, DerefMut};
 
-#[derive(Clone, Copy)]
-pub struct MetropolisParameters {
-    pub sweep_times: usize,
-    pub bin_size: usize,
-    pub heat_up_times: usize
+use rand::Rng;
+use crate::*;
+use crate::config::*;
+
+/// If a struct `F` implements `MetropolisFlip`, a Metropolis algorithm can be implemented by information provided
+/// by it, and the algorithm is encapsulated in `Metropolis<F>`. `Metropolis<F>` does one sweep a time, while 
+/// `SweepingModel<Metropolis<F>>` can automatically control heating up and binning.
+/// 
+/// Both `SweepingModel` and `Metropolis` implements `DerefMut` so methods invoked on any instance on them may be 
+/// defined on `flipping_field`.
+pub trait MetropolisFlip {
+    fn new() -> Self;
+    fn flip(&mut self, flipped_site: usize);
+    fn accept_rate(&self, flipped_site: usize) -> f64;
 }
 
-impl MetropolisParameters {
-    pub fn new() -> Self {
-        Self {
-            sweep_times: 0, bin_size: 1, heat_up_times: 0
+pub struct Metropolis<F: MetropolisFlip> {
+    flipping_field: F
+}
+
+impl<F> Deref for Metropolis<F> where F: MetropolisFlip {
+    type Target = F;
+
+    fn deref(&self) -> &Self::Target {
+        &self.flipping_field
+    }
+}
+
+impl<F> DerefMut for Metropolis<F> where F: MetropolisFlip {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.flipping_field
+    }
+}
+
+impl<F> Sweep for Metropolis<F> where F: MetropolisFlip {
+    fn new() -> Self {
+        Self {flipping_field: F::new()}
+    }
+
+    fn sweep<C: FnMut(&Self) -> ()>(&mut self, sweep_times: usize, mut callback: C) {
+        let mut rng = rand::thread_rng();
+        for _ in 0 .. sweep_times {
+            for flipped_site in 0 .. SITE_NUM {
+                if rng.gen::<f64>() < self.accept_rate(flipped_site) {
+                    self.flip(flipped_site);
+                }
+            }
+            callback(self);
         }
-    }
-}
-
-pub struct MetropolisUpdater<F: Flip> {
-    sweepable_field: F,
-    simulation_parameter: MetropolisParameters
-}
-
-impl<F> MetropolisUpdater<F> where F: Flip {
-    pub fn new() -> Self {
-        Self {
-            sweepable_field: F::new(), 
-            simulation_parameter: MetropolisParameters::new()
-        }
-    }
-}
-
-impl<F> EnergyMeasure for MetropolisUpdater<F> where F: Flip {
-    type ModelParameter = F::ModelParameter;
-
-    fn set_model_parameters(&mut self, model_parameter: Self::ModelParameter) {
-        self.sweepable_field.set_model_parameters(model_parameter);
-    }
-
-    fn energy(&self) -> f64 {
-        self.sweepable_field.energy()
-    }
-
-    fn energy_change(&self, flipped_site: usize) -> f64 {
-        self.sweepable_field.energy_change(flipped_site)
-    }
-}
-
-impl<F> Model for MetropolisUpdater<F> where F: Flip {
-    type SimulationParameters = MetropolisParameters;
-    type FieldConfiguration = F;
-
-    fn set_simulation_parameters(&mut self, simulation_parameter: Self::SimulationParameters) {
-        self.simulation_parameter = simulation_parameter;
-    }
-
-    fn run<T, S, C: Fn(&F) -> T, G: Fn(Vec<T>) -> S>(&mut self, diagnose: C, binning: G) -> Vec<S> {
-        let mut result = Vec::new();
-        let MetropolisParameters { sweep_times, bin_size, heat_up_times } = self.simulation_parameter;
-
-        self.sweepable_field.sweep(heat_up_times, |_|{});
-
-        for _ in (0 .. sweep_times).step_by(bin_size) {
-            let mut this_bin = Vec::new();
-            self.sweepable_field.sweep(bin_size, |field| {
-                this_bin.push(diagnose(field));
-            });
-            result.push(binning(this_bin));
-        }
-        
-        result
     }
 }
