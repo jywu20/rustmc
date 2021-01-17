@@ -11,13 +11,13 @@ pub struct ClassicalIsingModelParameter {
     pub b: f64
 }
 
-pub struct ClassicalIsingModel2D {
+pub struct ClassicalIsingModel2DFlipping {
     pub lattice: IsingField2D,
     pub model_parameter: ClassicalIsingModelParameter,
     pub simulation_parameter: MetropolisParameters
 }
 
-impl EnergyMeasure for ClassicalIsingModel2D {
+impl EnergyMeasure for ClassicalIsingModel2DFlipping {
     type ModelParameter = ClassicalIsingModelParameter;
 
     fn set_model_parameters(&mut self, model_parameter: Self::ModelParameter) {
@@ -54,7 +54,7 @@ impl EnergyMeasure for ClassicalIsingModel2D {
     }
 }
 
-impl Flip for ClassicalIsingModel2D {
+impl Flip for ClassicalIsingModel2DFlipping {
     fn new() -> Self {
         Self {
             lattice: IsingField2D::new(),
@@ -71,7 +71,7 @@ impl Flip for ClassicalIsingModel2D {
         self.lattice[site] *= -1;
     }
 
-    fn sweep<F: FnMut(&ClassicalIsingModel2D) -> ()>(&mut self, sweep_times: usize, mut callback: F) {
+    fn sweep<F: FnMut(&ClassicalIsingModel2DFlipping) -> ()>(&mut self, sweep_times: usize, mut callback: F) {
         let mut rng = rand::thread_rng();
         for _ in 0 .. sweep_times {
             for flipped_site in 0 .. SITE_NUM {
@@ -84,7 +84,7 @@ impl Flip for ClassicalIsingModel2D {
     }
 }
 
-pub type ClassicalIsingModel2DMetropolis = MetropolisUpdater<ClassicalIsingModel2D>;
+pub type ClassicalIsingModel2DMetropolis = MetropolisUpdater<ClassicalIsingModel2DFlipping>;
 
 #[cfg(test)]
 mod test {
@@ -100,7 +100,7 @@ mod test {
                 for &b in [1.0, -10.0, 0.0].iter() {
                     for &j in [-1.0, 0.0, 8.0].iter() {
                         for &beta in [0.9, 0.8, 0.1].iter() {
-                            let mut model = ClassicalIsingModel2D::new();
+                            let mut model = ClassicalIsingModel2DFlipping::new();
                             model.set_model_parameters(ClassicalIsingModelParameter {j, beta, b});
 
                             let free_energy_before = (&model).energy();
@@ -118,7 +118,7 @@ mod test {
 
     #[test]
     fn test_update() {
-        let mut model = ClassicalIsingModel2D::new();
+        let mut model = ClassicalIsingModel2DFlipping::new();
         let sweep_times = 10;
         model.set_model_parameters(ClassicalIsingModelParameter {
             j: 1.0, beta: 0.1, b: 0.0

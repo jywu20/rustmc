@@ -1,5 +1,4 @@
 use crate::Model;
-
 use super::{EnergyMeasure, Flip};
 
 #[derive(Clone, Copy)]

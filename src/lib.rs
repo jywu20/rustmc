@@ -6,6 +6,7 @@ mod postop;
 pub mod fermion;
 pub mod ising;
 pub mod flip;
+pub mod spin;
 
 pub use lattice::*;
 pub use model::*;
