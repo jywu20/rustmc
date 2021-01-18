@@ -1,3 +1,5 @@
+use std::ops::Range;
+
 use crate::*;
 use crate::observables::Energy;
 use crate::config::*;
@@ -54,6 +56,8 @@ impl Energy for ClassicalIsingModel2DFlipping {
 }
 
 impl MetropolisFlip for ClassicalIsingModel2DFlipping {
+    type SweepingRange = Range<usize>;
+
     fn new() -> Self {
         Self {
             lattice: IsingField2D::new(),
@@ -70,6 +74,10 @@ impl MetropolisFlip for ClassicalIsingModel2DFlipping {
     fn accept_rate(&self, flipped_site: usize) -> f64 {
         (- self.energy_change(flipped_site)).exp()
     }
+
+    fn sweep_range(&self) -> Self::SweepingRange {
+        0 .. SITE_NUM
+    } 
 }
 
 pub type ClassicalIsingModel2DMetropolis = SweepingModel<Metropolis<ClassicalIsingModel2DFlipping>>;

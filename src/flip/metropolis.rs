@@ -1,8 +1,6 @@
 use std::ops::{Deref, DerefMut};
-
 use rand::Rng;
 use crate::*;
-use crate::config::*;
 
 /// If a struct `F` implements `MetropolisFlip`, a Metropolis algorithm can be implemented by information provided
 /// by it, and the algorithm is encapsulated in `Metropolis<F>`. `Metropolis<F>` does one sweep a time, while 
@@ -10,17 +8,19 @@ use crate::config::*;
 /// 
 /// Both `SweepingModel` and `Metropolis` implements `DerefMut` so methods invoked on any instance on them may be 
 /// defined on `flipping_field`.
-pub trait MetropolisFlip {
+pub trait MetropolisFlip where <Self::SweepingRange as Iterator>::Item : Copy {
+    type SweepingRange: Iterator;
     fn new() -> Self;
-    fn flip(&mut self, flipped_site: usize);
-    fn accept_rate(&self, flipped_site: usize) -> f64;
+    fn flip(&mut self, flipped_site: <Self::SweepingRange as Iterator>::Item);
+    fn accept_rate(&self, flipped_site: <Self::SweepingRange as Iterator>::Item) -> f64;
+    fn sweep_range(&self) -> Self::SweepingRange;
 }
 
-pub struct Metropolis<F: MetropolisFlip> {
+pub struct Metropolis<F: MetropolisFlip> where <F::SweepingRange as Iterator>::Item : Copy {
     flipping_field: F
 }
 
-impl<F> Deref for Metropolis<F> where F: MetropolisFlip {
+impl<F> Deref for Metropolis<F> where F: MetropolisFlip, <F::SweepingRange as Iterator>::Item : Copy {
     type Target = F;
 
     fn deref(&self) -> &Self::Target {
@@ -28,13 +28,13 @@ impl<F> Deref for Metropolis<F> where F: MetropolisFlip {
     }
 }
 
-impl<F> DerefMut for Metropolis<F> where F: MetropolisFlip {
+impl<F> DerefMut for Metropolis<F> where F: MetropolisFlip, <F::SweepingRange as Iterator>::Item : Copy {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.flipping_field
     }
 }
 
-impl<F> Sweep for Metropolis<F> where F: MetropolisFlip {
+impl<F> Sweep for Metropolis<F> where F: MetropolisFlip, <F::SweepingRange as Iterator>::Item : Copy {
     fn new() -> Self {
         Self {flipping_field: F::new()}
     }
@@ -42,7 +42,7 @@ impl<F> Sweep for Metropolis<F> where F: MetropolisFlip {
     fn sweep<C: FnMut(&Self) -> ()>(&mut self, sweep_times: usize, mut callback: C) {
         let mut rng = rand::thread_rng();
         for _ in 0 .. sweep_times {
-            for flipped_site in 0 .. SITE_NUM {
+            for flipped_site in self.flipping_field.sweep_range() {
                 if rng.gen::<f64>() < self.accept_rate(flipped_site) {
                     self.flip(flipped_site);
                 }

@@ -13,6 +13,6 @@ pub struct NaiveFermionDQMC {
 mod test {
     #[test]
     fn array() {
-
+        
     }
 }
