@@ -1,7 +1,34 @@
 {
     "cSpell.words": [
         "DQMC",
+        "braket",
+        "downarrow",
         "ising",
-        "sweepable"
-    ]
+        "plaquette",
+        "plaquettes",
+        "sublattice",
+        "sweepable",
+        "uparrow",
+        "worldline",
+        "worldlines"
+    ],
+    "markdown.extension.katex.macros": {
+        "\\bra": "\\langle #1 |",
+        "\\ket": "| #1 \\rangle",
+        "\\braket": "\\langle #1 | #2 \\rangle",
+        "\\mel": "\\langle #1 | #2 | #3 \\rangle",
+        "\\dyad": "\\ket{#1} \\bra{#2}",
+
+        "\\ee": "\\mathrm{e}",
+        "\\ii": "\\mathrm{i}",
+        
+        "\\grad": "\\boldsymbol{\\nabla} #1",
+        "\\div": "\\boldsymbol{\\nabla} \\cdot #1",
+        "\\dd": "\\mathrm{d}",
+
+        "\\Re": "\\mathrm{Re}",
+        "\\Im": "\\mathrm{Im}",
+
+        "\\bigO": "\\mathcal{O}(#1)"
+    }
 }

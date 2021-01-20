@@ -3,7 +3,7 @@ use montecarlo::observables::*;
 use montecarlo::ising::*;
 
 fn main() {
-    let mut model = ClassicalIsingModel2DMetropolis::new();
+    let mut model = ClassicalIsingModel2DWolff::new();
     let sweep_times = 1000;
     let heat_up_times = 1000;
     let bin_size = 10;
@@ -26,10 +26,10 @@ fn main() {
             |model| {
                 (
                     // Measure the magnetization and the correlation between two points
-                    model.lattice.magnetization(),
-                    model.lattice.correlation(
-                        (&model).lattice.index_list[0][1],
-                        (&model).lattice.index_list[5][5],
+                    model.magnetization(),
+                    model.correlation(
+                        (&model).index_list[0][1],
+                        (&model).index_list[5][5],
                     )
                 )
             },

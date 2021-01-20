@@ -7,20 +7,22 @@ use crate::*;
 /// `SweepingModel<Metropolis<F>>` can automatically control heating up and binning.
 /// 
 /// Both `SweepingModel` and `Metropolis` implements `DerefMut` so methods invoked on any instance on them may be 
-/// defined on `flipping_field`.
-pub trait MetropolisFlip where <Self::SweepingRange as Iterator>::Item : Copy {
+/// defined on `flipping_field`. Quite often, `flipping_field` is just a wrapper of a field, providing methods for
+/// the `MetropolisUpdate` trait, so itself implements `Deref` and `DerefMut`.
+pub trait MetropolisUpdate where <Self::SweepingRange as Iterator>::Item : Copy {
     type SweepingRange: Iterator;
+    
     fn new() -> Self;
     fn flip(&mut self, flipped_site: <Self::SweepingRange as Iterator>::Item);
     fn accept_rate(&self, flipped_site: <Self::SweepingRange as Iterator>::Item) -> f64;
     fn sweep_range(&self) -> Self::SweepingRange;
 }
 
-pub struct Metropolis<F: MetropolisFlip> where <F::SweepingRange as Iterator>::Item : Copy {
+pub struct MetropolisAlgorithm<F: MetropolisUpdate> where <F::SweepingRange as Iterator>::Item : Copy {
     flipping_field: F
 }
 
-impl<F> Deref for Metropolis<F> where F: MetropolisFlip, <F::SweepingRange as Iterator>::Item : Copy {
+impl<F> Deref for MetropolisAlgorithm<F> where F: MetropolisUpdate, <F::SweepingRange as Iterator>::Item : Copy {
     type Target = F;
 
     fn deref(&self) -> &Self::Target {
@@ -28,13 +30,13 @@ impl<F> Deref for Metropolis<F> where F: MetropolisFlip, <F::SweepingRange as It
     }
 }
 
-impl<F> DerefMut for Metropolis<F> where F: MetropolisFlip, <F::SweepingRange as Iterator>::Item : Copy {
+impl<F> DerefMut for MetropolisAlgorithm<F> where F: MetropolisUpdate, <F::SweepingRange as Iterator>::Item : Copy {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.flipping_field
     }
 }
 
-impl<F> Sweep for Metropolis<F> where F: MetropolisFlip, <F::SweepingRange as Iterator>::Item : Copy {
+impl<F> Sweep for MetropolisAlgorithm<F> where F: MetropolisUpdate, <F::SweepingRange as Iterator>::Item : Copy {
     fn new() -> Self {
         Self {flipping_field: F::new()}
     }
