@@ -1,6 +1,6 @@
 use colored::*;
 use montecarlo::Sweep;
-use montecarlo::config::SIDE;
+use montecarlo::config::*;
 use montecarlo::observables::{Energy, Magnetic};
 use montecarlo::ising::{
     ClassicalIsingModel2DWolff, 
@@ -25,13 +25,13 @@ fn show_colored_field(field: &ClassicalIsingField2D) {
 fn main() {
     let mut model = ClassicalIsingModel2DWolff::new();
 
-    // for i in 0 .. SITE_NUM {
-    //     model[i] = 1;
-    // }
+    for i in 0 .. SITE_NUM {
+        model[i] = 1;
+    }
     show_colored_field(&model);
 
     model.set_model_parameters(ClassicalIsingModelParameter {
-        j: 1.0, beta: 2.0, b: 0.0
+        j: 1.0, beta: 5.0, b: 0.0
     });
 
     for i in 0 .. 1000 {

@@ -52,11 +52,10 @@ impl<F> Sweep for WolffClusterAlgorithm<F> where F: WolffClusterUpdate, <F::Expa
             loop {
                 if let Some(center) = to_be_considered_centers.pop() {
                     for site in self.propose(center) {
-                        if (! to_be_considered_centers.contains(&site)) && (! cluster.contains(&site)) {
+                        if ! cluster.contains(&site) {
                             if rng.gen::<f64>() < self.accept_prob(center, site) {
                                 cluster.push(site);
                                 to_be_considered_centers.push(site);
-                                break;
                             }
                         }
                     }

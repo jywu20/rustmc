@@ -26,7 +26,7 @@ fn main() {
             |model| {
                 (
                     // Measure the magnetization and the correlation between two points
-                    model.magnetization(),
+                    model.magnetization().abs(),
                     model.correlation(
                         (&model).index_list[0][1],
                         (&model).index_list[5][5],
