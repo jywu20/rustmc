@@ -1,5 +1,4 @@
 use std::ops::{Deref, DerefMut};
-use ising::ClassicalIsingField2D;
 use rand::Rng;
 use rand::thread_rng;
 use rand::seq::SliceRandom;
@@ -8,6 +7,7 @@ use crate::config::*;
 use crate::flip::*;
 use super::IndexRange;
 use super::ClassicalIsingModelParameter;
+use super::ClassicalIsingField2D;
 
 pub struct ClassicalIsingModel2DWolffUpdating {
     field: ClassicalIsingField2D,

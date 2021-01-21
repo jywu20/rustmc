@@ -3,8 +3,8 @@ use montecarlo::observables::*;
 use montecarlo::ising::*;
 
 fn main() {
-    let sweep_times = 1000;
-    let heat_up_times = 1000;
+    let sweep_times = 100;
+    let heat_up_times = 100;
     let bin_size = 10;
 
     for i in 50..500 {
