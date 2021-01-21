@@ -3,7 +3,6 @@ use montecarlo::observables::*;
 use montecarlo::ising::*;
 
 fn main() {
-    let mut model = ClassicalIsingModel2DWolff::new();
     let sweep_times = 1000;
     let heat_up_times = 1000;
     let bin_size = 10;
@@ -11,7 +10,10 @@ fn main() {
     for i in 50..500 {
         let temp = 0.01 * i as f64;
         let beta = 1.0 / temp;
-        let b = 0.01;
+        let b = 0.0;
+
+        let mut model = ClassicalIsingModel2DWolff::new();
+        // println!("{}", model.to_string());
 
         model.set_model_parameters(ClassicalIsingModelParameter { j: 1.0, beta, b });
 
@@ -26,7 +28,11 @@ fn main() {
             |model| {
                 (
                     // Measure the magnetization and the correlation between two points
-                    model.magnetization(),
+
+                    // With cluster updating, when a ferromagnetic order is formed, the whole ising field is a 
+                    // big cluster, so the magnetization flips rapidly between 1 and -1.
+                    // That is why `.abs()` is necessary here.
+                    model.magnetization().abs(),
                     model.correlation(
                         (&model).index_list[0][1],
                         (&model).index_list[5][5],
@@ -42,10 +48,12 @@ fn main() {
             },
         );
 
+        // println!("{}", model.to_string());
+
         let (mag_acc, corr_acc) = result
             .iter()
             .fold((0.0, 0.0), |acc, x| (acc.0 + x.0, acc.1 + x.1));
-            
+        
         println!("{} {} {}", temp, mag_acc / result.len() as f64, corr_acc / result.len() as f64);
     }
 }

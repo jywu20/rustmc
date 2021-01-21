@@ -8,7 +8,7 @@ pub trait WolffClusterUpdate where <Self::ExpansionRange as Iterator>::Item : Co
     fn new() -> Self;
     fn start(&self) -> <Self::ExpansionRange as Iterator>::Item;
     fn propose(&mut self, site: <Self::ExpansionRange as Iterator>::Item) -> Self::ExpansionRange;
-    fn accept_rate(&mut self, start: <Self::ExpansionRange as Iterator>::Item, end: <Self::ExpansionRange as Iterator>::Item) -> f64;
+    fn accept_prob(&self, start: <Self::ExpansionRange as Iterator>::Item, end: <Self::ExpansionRange as Iterator>::Item) -> f64;
     fn flip(&mut self, site: <Self::ExpansionRange as Iterator>::Item);
 }
 
@@ -42,22 +42,21 @@ impl<F> Sweep for WolffClusterAlgorithm<F> where F: WolffClusterUpdate, <F::Expa
             let mut rng = rand::thread_rng();
             
             let mut cluster: Vec<<F::ExpansionRange as Iterator>::Item> = Vec::new(); 
-            let mut to_be_considered_sites: Vec<<F::ExpansionRange as Iterator>::Item> = Vec::new();
-            let mut visited: Vec<<F::ExpansionRange as Iterator>::Item> = Vec::new();
+            let mut to_be_considered_centers: Vec<<F::ExpansionRange as Iterator>::Item> = Vec::new();
             
             let start = self.start();
-            to_be_considered_sites.push(start);
+            to_be_considered_centers.push(start);
             cluster.push(start);
-            visited.push(start);
 
             // Form a cluster.
             loop {
-                if let Some(center) = to_be_considered_sites.pop() {
+                if let Some(center) = to_be_considered_centers.pop() {
                     for site in self.propose(center) {
-                        if (! to_be_considered_sites.contains(&site)) && (! visited.contains(&site)) {
-                            visited.push(site);
-                            if rng.gen::<f64>() < self.accept_rate(center, site) {
+                        if (! to_be_considered_centers.contains(&site)) && (! cluster.contains(&site)) {
+                            if rng.gen::<f64>() < self.accept_prob(center, site) {
                                 cluster.push(site);
+                                to_be_considered_centers.push(site);
+                                break;
                             }
                         }
                     }
@@ -70,7 +69,6 @@ impl<F> Sweep for WolffClusterAlgorithm<F> where F: WolffClusterUpdate, <F::Expa
             for site in cluster {
                 self.flip(site);
             }
-
             callback(self);
         }
     }

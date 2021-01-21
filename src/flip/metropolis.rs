@@ -14,7 +14,7 @@ pub trait MetropolisUpdate where <Self::SweepingRange as Iterator>::Item : Copy 
     
     fn new() -> Self;
     fn flip(&mut self, flipped_site: <Self::SweepingRange as Iterator>::Item);
-    fn accept_rate(&self, flipped_site: <Self::SweepingRange as Iterator>::Item) -> f64;
+    fn accept_prob(&self, flipped_site: <Self::SweepingRange as Iterator>::Item) -> f64;
     fn sweep_range(&self) -> Self::SweepingRange;
 }
 
@@ -45,7 +45,7 @@ impl<F> Sweep for MetropolisAlgorithm<F> where F: MetropolisUpdate, <F::Sweeping
         let mut rng = rand::thread_rng();
         for _ in 0 .. sweep_times {
             for flipped_site in self.flipping_field.sweep_range() {
-                if rng.gen::<f64>() < self.accept_rate(flipped_site) {
+                if rng.gen::<f64>() < self.accept_prob(flipped_site) {
                     self.flip(flipped_site);
                 }
             }

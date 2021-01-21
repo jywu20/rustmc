@@ -1,8 +1,9 @@
-use rand;
-use rand::Rng;
 use std::string::ToString;
 use std::ops::Index;
 use std::ops::IndexMut;
+use rand;
+use rand::Rng;
+use colored::*;
 use crate::config::*;
 use crate::Lattice2D;
 use crate::observables::*;

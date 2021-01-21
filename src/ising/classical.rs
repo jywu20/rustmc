@@ -82,3 +82,34 @@ impl Energy for ClassicalIsingField2D {
         - beta * (delta_free_energy_int * j + delta_free_energy_b * b)
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    pub fn test_free_energy_change() {
+        println!("Testing free_energy change.");
+
+        for _ in 0 .. 20 {
+
+            for flipped_site in 0 .. 4 {
+                for &b in [1.0, -10.0, 0.0].iter() {
+                    for &j in [-1.0, 0.0, 8.0].iter() {
+                        for &beta in [0.9, 0.8, 0.1].iter() {
+                            let mut model = ClassicalIsingField2D::new();
+                            model.set_model_parameters(ClassicalIsingModelParameter {j, beta, b});
+
+                            let free_energy_before = (&model).energy();
+                            let predicted_free_energy_change = (&model).energy_change(flipped_site);
+                            model[flipped_site] *= -1;
+                            let free_energy_after = (&model).energy();
+
+                            assert!((free_energy_after - free_energy_before - predicted_free_energy_change).abs() < 0.01);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
