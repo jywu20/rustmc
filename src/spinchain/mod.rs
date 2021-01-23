@@ -1,3 +1,3 @@
-mod xxy1d;
+mod xxy1d_worldline;
 
-pub use xxy1d::*;
+pub use xxy1d_worldline::*;

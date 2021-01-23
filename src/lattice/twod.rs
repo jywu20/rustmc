@@ -3,7 +3,6 @@ use std::ops::Index;
 use std::ops::IndexMut;
 use rand;
 use rand::Rng;
-use colored::*;
 use crate::config::*;
 use crate::Lattice2D;
 use crate::observables::*;
@@ -11,6 +10,8 @@ use crate::observables::*;
 pub const ISING_VALUES_NUM: usize = 2;
 pub const ISING_VALUES: [i32;ISING_VALUES_NUM] = [-1, 1];
 
+/// 2D Ising field, or in other words, a field defined on a 2D lattice with only two values on each site: 1 or -1, 
+/// of which the Hamiltonian may not necessarily be $-\sum_{\langle i, j \rangle} \sigma_i \sigma_j$.
 pub struct IsingField2D {
     /// The list of sites in the lattice.
     /// The indexing rule is as follows:
@@ -57,10 +58,10 @@ impl IsingField2D {
         }
 
         Self {
-            coordinate_list: coordinate_list,
-            index_list: index_list,
+            coordinate_list,
+            index_list,
             configuration,
-            neighbor_list: neighbor_list
+            neighbor_list
         }
     }
 

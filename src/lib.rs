@@ -6,6 +6,7 @@ pub mod observables;
 pub mod dqmc;
 pub mod ising;
 pub mod flip;
+pub mod worldline;
 pub mod spinchain;
 
 pub use lattice::*;

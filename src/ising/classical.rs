@@ -1,7 +1,7 @@
 use std::ops::{Deref, DerefMut};
 use crate::observables::Energy;
 use crate::config::SITE_NUM;
-use super::IsingField2D;
+use crate::lattice::IsingField2D;
 
 #[derive(Copy, Clone)]
 pub struct ClassicalIsingModelParameter {
