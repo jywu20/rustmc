@@ -70,6 +70,10 @@ impl IsingField2D {
     pub fn neighbor(&self, site: usize, index: usize) -> usize {
         self.neighbor_list[site][index]
     }
+
+    pub fn nearest_neighbor(&self, site: usize) -> [usize;4] {
+        [self.neighbor(site, 0), self.neighbor(site, 1), self.neighbor(site, 2), self.neighbor(site, 3)]
+    }
 }
 
 impl Index<usize> for IsingField2D {

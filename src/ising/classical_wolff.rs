@@ -59,7 +59,7 @@ impl WolffClusterUpdate for ClassicalIsingModel2DWolffUpdating {
     }
 
     fn accept_prob(&self, point_1: usize, point_2: usize) -> f64 {
-        let ClassicalIsingModelParameter { j, beta, b } = self.field.model_parameter;
+        let ClassicalIsingModelParameter { j, beta, b: _ } = self.field.model_parameter;
         // TODO: introduce the magnetic field
         if self[point_1] == self[point_2] {
             1.0 - (-2.0 * beta * j).exp()

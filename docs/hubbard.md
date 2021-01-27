@@ -11,12 +11,21 @@ We are going to simulate the model on a $L \times L$ lattice. Let $N = L^2$.
 
 By Trotter decomposition we have
 $$
-Z \approx (\ee^{- \Delta \tau T} \ee^{-\Delta \tau H_\text{I}})^M,
+Z \approx \trace (\ee^{- \Delta \tau T} \ee^{-\Delta \tau H_\text{I}})^M,
 $$
-where $M \Delta \tau = \beta$.
+where $M \Delta \tau = \beta$. What we are going to do is to calculate the path integral for each time step.
+
+For the kinetic term, we introduce a matrix $\bold{T}$ such that 
+$$
+T = \bold{c}^\dagger_\uparrow \bold{T} \bold{c}_\uparrow + \bold{c}^\dagger_\downarrow \bold{T} \bold{c}_\downarrow.
+$$
+That is, only for nearest neighbors $i, j$, $T_{ij}$ has non-zero value $-t$, and otherwise $T_{ij}=0$.
+Therefore, 
+
+So in conclusion, at least theoretically, everything in the TODO
+
+
 
 ## Updating scheme
-
-
 
 ## 

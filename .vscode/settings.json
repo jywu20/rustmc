@@ -1,6 +1,7 @@
 {
     "cSpell.words": [
         "DQMC",
+        "acosh",
         "braket",
         "downarrow",
         "ising",
@@ -19,6 +20,7 @@
         "\\braket": "\\langle #1 | #2 \\rangle",
         "\\mel": "\\langle #1 | #2 | #3 \\rangle",
         "\\dyad": "\\ket{#1} \\bra{#2}",
+        "\\trace": "\\mathrm{tr}\\ ",
 
         "\\ee": "\\mathrm{e}",
         "\\ii": "\\mathrm{i}",
